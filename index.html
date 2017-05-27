@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>tdg</title>
+  </head>
+  <body>
+  <fb:login-button v-if="exist" scope="user_posts,publish_actions" onlogin="checkLoginState();" data-auto-logout-link="true" >
+      </fb:login-button><br>
+    <div id="app"></div>
+
+    <script src="/dist/build.js"></script>
+  </body>
+</html>
