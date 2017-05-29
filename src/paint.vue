@@ -1,5 +1,4 @@
 <template lang="html">
-
 	<div class="mainContainer">
   		<div class="subContainer">
     		<div class="content">
@@ -7,26 +6,28 @@
     		</div>
     		<div class="content">
     			<div id="data">
-            <h3 id="status"></h3>
+            <h2 id="status"></h2>
             <h3 id="postId"></h3>
+						<h2>¡Llega directo por una cheve doble!</h2>
       			<p id="p-left" >¿Ya tienes tu boleto de Thermo?</p>
-      			<p id="p-left" >¡Ganate una cervesa GRATIS!</p>
-      			<P id="p-left" class="border-bot">Lo unico que tienes que hacer es compartir esta publicación 
+      			<p id="p-left" ><strong>¡Gánate una cerveza GRATIS!</strong></p>
+      			<P id="p-left" class="border-bot">Lo unico que tienes que hacer es compartir esta publicación
       			   en tu Facebook para que tus amigos se enteren del evento.</P>
-      			</div>
-				<label>Ingresa el folio de tu ticket:</label><br>
-      			<input v-model="idTicket" class="folioId"><br>
-      			<button v-if="hidefalse" @click="confirm" class="btnConfirm">Confirmar ID</button>
-      			<h2 v-if="falso">Id incorrecto</h2>
-      			<button v-if="exist" @click="dataPost" class="btnShare">share</button>
-      		 <!--shareamos un post y obtenemos su id-->
-    
+    			</div>
+					<label>Ingresa el folio de tu ticket:</label><br>
+    			<input v-model="idTicket" class="folioId" v-if="!exist"><br>
+    			<button id="validate" v-if="hidefalse" @click="confirm" class="white greenBack btn">CONFIRMAR ID</button>
+					<div class="green ticketValidado" v-if="exist">
+						<strong>¡Boleto válido!</strong>
+					</div>
+    			<transition name="enterUp">
+						<h2 v-if="falso" class="colorado">Id incorrecto</h2>
+					</transition>
+					<button id="share" v-if="exist" @click="dataPost" class="white blueBack btn">SHARE</button>
+    		 <!--shareamos un post y obtenemos su id-->
     		</div>
   		</div>
-
 	</div>
-
-  
 </template>
 
 <script>
@@ -46,17 +47,17 @@ var firebase= require("firebase")
 export default {
   data () {
     return {
-            msg      :      'Welcome to Your Vue.js App',
-            idTicket :      '',
-            hidefalse:      'true',
-            idUser   :      '',
-            postId   :      '',
-            exist    :      false,
-            value    :      '',
-            dbUser   :      '',
-            dbId     :      '',
-            idPost   :      '',
-            falso    :      false
+      msg: 'Welcome to Your Vue.js App',
+      idTicket: '',
+      hidefalse: 'true',
+      idUser: '',
+      postId: '',
+      exist: false,
+      value: '',
+      dbUser: '',
+      dbId: '',
+      idPost: '',
+      falso: false
     }
   },
   computed: {},
@@ -95,13 +96,13 @@ export default {
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '771510193011152',
-    cookie     : true,  // enable cookies to allow the server to access 
+    cookie     : true,  // enable cookies to allow the server to access
                         // the session
     xfbml      : true,  // parse social plugins on this page
     version    : 'v2.9' // use graph api version 2.8
   });
 
-  // Now that we've initialized the JavaScript SDK, we call 
+  // Now that we've initialized the JavaScript SDK, we call
   // FB.getLoginStatus().  This function gets the state of the
   // person visiting this page and can return one of three states to
   // the callback you provide.  They can be:
@@ -153,7 +154,7 @@ export default {
           console.log("este es el id del usuario actual " + vm.idUser)
           //firebase.database().ref("face/").push(response);
           firebase.database().ref("/face").once('value').then(function(snap){
-            
+
             console.log(snap.val()),
             vm.dbUser = snap.val();
           })
@@ -165,85 +166,77 @@ export default {
           //   var vm = this;
           //   firebase.database().ref("IdPosts/").push(vm.postId)
           // },
-    
+
 //ingresa aqui todo las llamadas a la api
 }
   },
   methods: {
     //Compartimos un post y obtenemos su id
-          //a continuacion, comprobamos que el post este en publico
-          //si lo esta accedemos a ingresar el id      ¡¡----SOLO PODEMOS OBTENER EL ID DEL SHARE----!!
+    //a continuacion, comprobamos que el post este en publico
+    //si lo esta accedemos a ingresar el id      ¡¡----SOLO PODEMOS OBTENER EL ID DEL SHARE----!!
 
-          dataPost(){
-            var u = '/10211600055269848',
-                p = '_10211657971757724',
-                vm = this;
-            FB.ui({
-              method: 'share',
-              display: 'popup',
-              href: 'https://www.facebook.com/PalNorteOficial/photos/a.187269798071689.44965.185641444901191/907621902703138/?type=3&theater',
-            } , function(response){
-                  console.log('id Share: ');
-                  if (response) {
-                    console.log(response),
-                    vm.idPost = response,
-                    document.getElementById('postId').innerHTML = "Id del post ue acabas de publicar" + vm.idPost.post_id;
-                    FB.api(
-                    vm.idUser + '_'+vm.idPost.post_id,
-                    'GET',
-                    {"fields":"privacy,id,admin_creator,application,created_time,from,is_hidden,message,permalink_url"}, //AQUI OBTENGO TODA LA INFORMACION DEL POST
-                    function(response) {
-                    console.log("Datos despues de obtener el Post ID "),
-                    console.log(response);
-                    vm.value = response.privacy.value;
-                    if (vm.value == "ALL_FRIENDS") {
-                      alert("GRACIAS");
-                      
-                    }else{
-                      alert("ponlo como amigos");
-                    }
-                  }
-                )
-                    /*var vm = this;
-                    firebase.database().ref("IdPosts/").push(response)*/
-                  }
-                });
-          },
+    dataPost(){
+      var u = '/10211600055269848', // esto está hard coded
+          p = '_10211657971757724',
+          vm = this;
+      FB.ui({
+        method: 'share',
+        display: 'popup',
+        href: 'https://www.facebook.com/PalNorteOficial/photos/a.187269798071689.44965.185641444901191/907621902703138/?type=3&theater',
+      } , function(response){
+	          console.log('id Share: ');
+	          if (response) {
+	            console.log(response),
+	            vm.idPost = response,
+	            document.getElementById('postId').innerHTML = "Id del post ue acabas de publicar" + vm.idPost.post_id;
+	            FB.api(
+	            vm.idUser + '_'+vm.idPost.post_id,
+	            'GET',
+	            {"fields":"privacy,id,admin_creator,application,created_time,from,is_hidden,message,permalink_url"}, //AQUI OBTENGO TODA LA INFORMACION DEL POST
+	            function(response) {
+		            console.log("Datos despues de obtener el Post ID "),
+		            console.log(response);
+		            vm.value = response.privacy.value;
+		            if (vm.value == "ALL_FRIENDS") {
+		              alert("GRACIAS");
 
+		            }else{
+		              alert("ponlo como amigos");
+		            }
+	          	}
+	        	)
+          /*var vm = this;
+          firebase.database().ref("IdPosts/").push(response)*/
+        }
+      });
+    },
 
-
-
-          //confirmamos que exista el  dato ingresado en el FIREBASE   ¡¡-- En este caso es un ID en especifico--!!
-          confirm(){
-              var vm = this;
-              this.msg
-              firebase.database().ref("/Users/").orderByValue/*oredena el valor */().equalTo/*equalto*/(vm.idTicket) //hacemos un consulta de un valor en especifico
-              .once('value',function(snap){
-                console.log(snap.val());
-                if( snap.val()  != null){
-                  vm.exist= true;
-                  vm.falso=false;
-                  vm.hidefalse = false;
-                }else{
-                  vm.falso=true; 
-                }
-              })
-               // firebase.database().ref("/Users").once("value").then(function(data){
-              //  data = data.val();//obtener los visibles
-              //  console.log(data);
-              // })
-              //accedemos a los datos de firebase, .ref: (hacemos   referencia a que parte queremos entrar de la base de datos)
-
-
-
-            },
-
-          exit(){
-              
+    //confirmamos que exista el  dato ingresado en el FIREBASE   ¡¡-- En este caso es un ID en especifico--!!
+    confirm(){
+        var vm = this;
+        this.msg
+        firebase.database().ref("/Users/").orderByValue/*oredena el valor */().equalTo/*equalto*/(vm.idTicket) //hacemos un consulta de un valor en especifico
+        .once('value',function(snap) {
+          console.log(snap.val());
+          if( snap.val()  != null) {
+            vm.exist= true;
+            vm.falso=false;
+            vm.hidefalse = false;
+          } else{
+            vm.falso=true;
           }
-
+        });
+         // firebase.database().ref("/Users").once("value").then(function(data){
+        //  data = data.val();//obtener los visibles
+        //  console.log(data);
+        // })
+        //accedemos a los datos de firebase, .ref: (hacemos   referencia a que parte queremos entrar de la base de datos)
+			},
+    exit() {}
   },
+
   components: {}
+
 }
 </script>
 
@@ -257,25 +250,37 @@ export default {
 	margin-left: 4%;
 }
 
-.btnShare{
-	width: inherit;
-	line-height: 40px;
+.btn{
+	margin-top: 2%;
+	width: 100%;
 	background-color: #d1d1d1;
-  margin-top: 3%;
+	border: 1px solid #e1e1e1;
+	line-height: 80px;
+	font-size: 20px;
+	opacity: 0.9;
+	transition: linear opacity 0.2s;
 }
 
-.btnConfirm{
-	margin-top: 2%;
-
+.btn:hover {
+	cursor: pointer;
+	opacity: 1;
 }
 
 .folioId{
 	margin-top: 3%;
-	height: 40px;
-    width: inherit;
+	height: 80px;
+  width: 96%;
+	font-size: 20px;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: center;
 }
 
-
+.ticketValidado {
+	width: 100%;
+	line-height: 80px;
+	text-align: center;
+}
 
 #margin-bot{
 	margin-top: 7%;
@@ -301,67 +306,93 @@ export default {
 }
 
 .content {
-  float: left; 
+  float: left;
   width: 50%;
 }
 
 .poster {
-  margin-left: 20%;
   width: 60%;
 }
 
+.blueBack {
+	background-color: #106989;
+}
+
+.greenBack {
+	background-color: #45ad6e;
+}
+
+.green {
+	color: #45ad6e;
+}
+
+.colorado {
+	color: #ce4c4c;
+}
+
+.white {
+	color: #fff;
+}
+
 @media only screen and (max-width: 1200px) {
-  
+
   .mainContainer {
     width: 960px;
   }
-  
+
   .subContainer {
     width: 864px;
     margin-left: 48px
   }
-  
+
 }
 
 @media only screen and (max-width: 960px) {
-  
+
   .mainContainer {
     width: 720px;
   }
-  
+
   .subContainer {
     width: 648px;
     margin-left: 36px;
   }
-  
+
   .content {
     width: 80%;
     margin-left: 10%;
     float: none;
   }
-  
+
 }
 
 @media only screen and (max-width: 720px) {
-  
+
   .mainContainer {
     width: 100%;
+		/*
+		margin-top: N px; <-- lo que sea que mida el haeder.
+		*/
   }
-  
+
   .subContainer {
     width: 90%;
     margin-left: 5%;
   }
-  
+
   .content {
     width: 100%;
     margin-left: 0;
   }
-  
+
   .poster {
     width: 100%;
     margin-left: 0;
   }
-  
+
+	.btn {
+		margin-bottom: 50px;
+	}
+
 }
 </style>

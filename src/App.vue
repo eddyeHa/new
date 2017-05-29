@@ -15,8 +15,8 @@ export default {
     }
   },
 
-  components:{
-              paint
+  components: {
+    paint
   },
 }
 </script>
@@ -51,4 +51,42 @@ li {
 a {
   color: #42b983;
 }
+
+button:focus, input:focus {
+  outline: none;
+}
+
+/* ------------------------------------- */
+/* ------------ TRANSITIONS ------------ */
+/* ------------------------------------- */
+
+.enterUp-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.enterUp-enter-active /*, .list-enter-leave */ {
+  transition: all 0.5s;
+}
+
+.enterUp-enter, .enterUp-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.fade-enter-active {
+  transition: opacity 0.3s
+}
+
+/* Removed for visual reasons
+.fade-leave-active {
+  transition: opacity 0.3s
+}
+*/
+
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+
+
 </style>
